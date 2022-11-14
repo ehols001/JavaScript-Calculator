@@ -1,0 +1,80 @@
+.calculator {
+    min-width: 360px;
+    background-image: linear-gradient(
+        rgb(12, 12, 12), rgb(22, 22, 22) 15%, black 35%
+    );
+    border: 2px solid gray;
+    border-radius: 10px;
+    padding: 15px;
+}
+
+#display {
+    background-color: black;
+    min-width: 335px;
+    height: 100px;
+    margin: 0 auto 10px auto;
+    border-radius: 5px;
+    font-family: "Audiowide", sans-serif;
+    text-align: right;
+    position: relative;
+}
+
+.formula-display, .results-display {
+    height: 50%;
+    line-height: 45px;
+    padding-right: 8px;
+}
+
+.formula-display {
+    padding-top: 8px;
+    font-size: 25px;
+    color: rgb(66, 145, 209);
+}
+
+.results-display {
+    padding-top: 2px;
+    font-size: 40px;
+    color: white;
+}
+
+.button-grid {
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+    grid-gap: 10px 10px;
+    margin-top: 13px;
+}
+
+button {
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    border: none;
+    background-color: rgb(44, 43, 46);
+    color: white;
+    font-size: 26px;
+    text-align: center;
+}
+
+button:hover {
+    border: 2px solid black;
+    cursor: pointer;
+}
+
+.wide-button {
+    width: 10.1rem;
+    grid-column: 1 / span 2;
+    border-radius: 40px;
+}
+
+.tall-button {
+    height: 10rem;
+    grid-column: 4;
+    grid-row: 4 / span 2;
+    border-radius: 40px;
+    background-color: rgba(34, 105, 185, 0.863);
+}
+
+#clear {
+    background-color: rgba(114, 71, 114, 0.863);
+    color: rgba(248, 236, 248, 0.863);
+}
