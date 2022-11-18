@@ -9,11 +9,14 @@ class Calculator extends React.Component {
     super(props);
     this.state = {
       formula: [''],
-      result: '0'
+      result: 0
     }
     this.appendNum = this.appendNum.bind(this);
     this.handleOperatorClick = this.handleOperatorClick.bind(this);
     this.calculate = this.calculate.bind(this);
+    this.isOperator = this.isOperator.bind(this);
+    this.getPrecendence = this.getPrecendence.bind(this);
+    this.evaluateFormula = this.evaluateFormula.bind(this);
     this.equals = this.equals.bind(this);
     this.clear = this.clear.bind(this);
   }
@@ -31,6 +34,9 @@ class Calculator extends React.Component {
     this.setState({
       formula: tempFormula
     }, () => {
+      this.setState({
+        result: this.evaluateFormula()
+      });
       //console.log("Formula: " + this.state.formula);
       //console.log("Formula Index: " + formula_Idx);
     });
@@ -52,10 +58,12 @@ class Calculator extends React.Component {
     });
   }
 
-  calculate = (num1, num2, operator) => {
-    const firstNum = parseFloat(num1);
-    const secondNum = parseFloat(num2);
-
+  calculate = (numbers, operator) => {
+    if(numbers.length < 2) {
+      return;
+    }
+    const secondNum = parseFloat(numbers.pop());
+    const firstNum = parseFloat(numbers.pop());
     //console.log("First Num: " + firstNum);
     //console.log("Second Num: " + secondNum);
 
@@ -69,9 +77,50 @@ class Calculator extends React.Component {
       return firstNum / secondNum;
   }
 
+  isOperator = (op) => {
+    return op === '+' || op === '-' || op === 'x' || op === '/';
+  }
+
+  getPrecendence = (op) => {
+    if(op === '+' || op === '-')
+      return 1;
+    if(op === 'x' || op === '/')
+      return 2;
+      
+    return 0;
+  }
+
+  evaluateFormula() {
+    let operators = [];
+    let numbers = [];
+
+    for(let i = 0; i < this.state.formula.length; i++) {
+      if(this.isOperator(this.state.formula[i])) {
+        if(operators.length === 0 || this.getPrecendence(this.state.formula[i]) > this.getPrecendence(operators[operators.length - 1])) {
+          operators.push(this.state.formula[i]);
+        } else {
+          while(operators.length > 0 && this.getPrecendence(this.state.formula[i]) <= this.getPrecendence(operators[operators.length - 1])) {
+            let lastOp = operators.pop();
+            numbers.push(this.calculate(numbers, lastOp));
+          }
+          operators.push(this.state.formula[i]);
+        }
+      } else {
+        numbers.push(this.state.formula[i]);
+      }
+    }
+
+    while(operators.length > 0) {
+      let nextOp = operators.pop();
+      numbers.push(this.calculate(numbers, nextOp));
+    }
+
+    return numbers[0];
+  }
+
   equals() {
     this.setState({
-      result: this.calculate(this.state.formula[formula_Idx - 2], this.state.formula[formula_Idx], this.state.formula[formula_Idx - 1]),
+      result: this.evaluateFormula()
     }, () => {
       this.setState({
         formula: [this.state.result]
@@ -85,7 +134,7 @@ class Calculator extends React.Component {
     formula_Idx = 0;
     this.setState({
       formula: [''],
-      result: '0'
+      result: 0
     });
   }
 
