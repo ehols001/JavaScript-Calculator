@@ -3,12 +3,13 @@ import './Calculator.css';
 //import $ from 'jquery';
 
 let formula_Idx = 0;
+let lastInput = '';
 
 class Calculator extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      formula: [''],
+      formula: [],
       result: 0
     }
     this.appendNum = this.appendNum.bind(this);
@@ -23,14 +24,20 @@ class Calculator extends React.Component {
 
   appendNum(event) {
     let tempFormula = [...this.state.formula];
-    let updatedNum = '';
     if(tempFormula[formula_Idx] === undefined) {
-      tempFormula = [...this.state.formula, event.target.value];
+      if(event.target.value === '.') {
+        tempFormula = [...this.state.formula, '0' + event.target.value];
+      } else {
+        tempFormula = [...this.state.formula, event.target.value];
+      }
+    }
+    else if((tempFormula[formula_Idx] === '0' && event.target.value === '0') || (lastInput === '.' && event.target.value === '.')) {
+      tempFormula = [...this.state.formula];
     }
     else {
-      updatedNum = this.state.formula[formula_Idx] + event.target.value;
-      tempFormula[formula_Idx] = updatedNum;
+      tempFormula[formula_Idx] = this.state.formula[formula_Idx] + event.target.value;
     }
+    lastInput = event.target.value;
     this.setState({
       formula: tempFormula
     }, () => {
@@ -49,13 +56,18 @@ class Calculator extends React.Component {
   }
 
   handleOperatorClick(event) {
-    this.setState({
-      formula: [...this.state.formula, event.target.value]
-    }, () => {
-      //console.log("Formula: " + this.state.formula);
-      //console.log("Formula Index: " + formula_Idx);
-      formula_Idx += 2;
-    });
+    if(this.isOperator(lastInput) && event.target.value === '-') {
+      this.appendNum(event);
+    } else {
+      lastInput = event.target.value;
+      this.setState({
+        formula: [...this.state.formula, event.target.value]
+      }, () => {
+        //console.log("Formula: " + this.state.formula);
+        //console.log("Formula Index: " + formula_Idx);
+        formula_Idx += 2;
+      });
+    }
   }
 
   calculate = (numbers, operator) => {
@@ -96,7 +108,8 @@ class Calculator extends React.Component {
 
     for(let i = 0; i < this.state.formula.length; i++) {
       if(this.isOperator(this.state.formula[i])) {
-        if(operators.length === 0 || this.getPrecendence(this.state.formula[i]) > this.getPrecendence(operators[operators.length - 1])) {
+        if(operators.length === 0 || (i !== 0 && this.isOperator(this.state.formula[i - 1]))
+        || this.getPrecendence(this.state.formula[i]) > this.getPrecendence(operators[operators.length - 1])) {
           operators.push(this.state.formula[i]);
         } else {
           while(operators.length > 0 && this.getPrecendence(this.state.formula[i]) <= this.getPrecendence(operators[operators.length - 1])) {
@@ -133,7 +146,7 @@ class Calculator extends React.Component {
   clear() {
     formula_Idx = 0;
     this.setState({
-      formula: [''],
+      formula: [],
       result: 0
     });
   }
