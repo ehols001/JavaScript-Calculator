@@ -1,6 +1,6 @@
 # JavaScript Calculator
 
-Created and devloped by Evan Holster
+Created and developed by Evan Holster
 
 ## Getting Started with Create React App
 
