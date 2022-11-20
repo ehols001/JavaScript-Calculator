@@ -156,7 +156,7 @@ class Calculator extends React.Component {
       <div className="calculator">
         <div id="display">
           <div className="formula-display">
-            {this.state.formula}
+            {this.state.formula.join(" ")}
           </div>
           <div className="results-display">
             {this.state.result}
