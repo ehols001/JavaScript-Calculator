@@ -3,7 +3,7 @@
   "name": "JavaScript Calculator - Evan Holster",
   "icons": [
     {
-      "src": "calculator-icon.png",
+      "src": "calculator-icon.PNG",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
     }
